@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="searchBar">
+            <input type="text" placeholder="Enter the city Name" spellcheck="false">
+            <button><img src="./images/search.png" alt="search image"></button>
+        </div>
+
+    <div class="weather">
+        <img src="./images/rain.png " alt="weather image" class="weather-icon">
+        <h1 class="temp">--°c</h1>
+        <h2 class="city">Channapatana</h2>
+        <div class="details">
+            <div class="col">
+                <div>
+                    <img src="./images/humidity.png" alt="humidity_image" class="humidity-icon">
+                    <p class="humidity">--%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <div>
+                    <img src="./images/windy.png" alt="windSpeed_image" class="wind-icon">
+                    <p class="wind">--Kmph</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    
+    <script>
+        const ApiKey = "24c3f07df526f5a03c6fa099be50a257";
+        const ApiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        const searchBox = document.querySelector(".searchBar input");
+        const searchBtn = document.querySelector(".searchBar button");
+    
+        async function CheckWeather(city) {
+            try {
+                const response = await fetch(ApiUrl + city + `&appid=${ApiKey}`);
+                if (!response.ok) {
+                    throw new Error("City not found");
+                }
+                const data = await response.json();
+                console.log(data);
+    
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + "Kmph";
+    
+                const weatherIcon = document.querySelector(".weather-icon");
+                if (data.weather[0].main == "Clouds") {
+                    weatherIcon.src = "images/clouds.png";
+                } else if (data.weather[0].main == "Clear") {
+                    weatherIcon.src = "images/clear.png";
+                } else if (data.weather[0].main == "Rain") {
+                    weatherIcon.src = "images/rain.png";
+                } else if (data.weather[0].main == "Mist") {
+                    weatherIcon.src = "images/mist.png";
+                } else if (data.weather[0].main == "Snow") {
+                    weatherIcon.src = "images/snow.png";
+                } else if (data.weather[0].main == "Drizzle") {
+                    weatherIcon.src = "images/drizzle.png";
+                } else {
+                    weatherIcon.src = "images/default.png"; // Default icon for unknown weather
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Unable to fetch weather data. Please check the city name and try again.");
+            }
+        }
+    
+        searchBtn.addEventListener("click", () => {
+            const city = searchBox.value.trim();
+            if (city) {
+                CheckWeather(city);
+            } else {
+                alert("Please enter a city name.");
+            }
+        });
+
+        window.addEventListener("load", () => {
+        CheckWeather("Channapatna");
+    });
+    </script>
+</body>
+</html>
